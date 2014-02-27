@@ -363,7 +363,7 @@ class FormBuilderTest < ActionView::TestCase
 
   def test_url_field
     with_url_field :url
-    assert_select "div[class='controls']" do
+    assert_select "div[class='form-control']" do
       assert_select "input[type='url'][id='user_url'][name='user[url]']"
     end
   end
