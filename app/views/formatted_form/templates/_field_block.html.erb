@@ -1,5 +1,5 @@
 <%
-  cg_class = 'control-group'
+  cg_class = 'form-group'
   cg_class << ' error' if options[:errors].present?
   
   input_class = ''
@@ -16,7 +16,7 @@
   
   <%= render :partial => 'formatted_form/templates/label', :locals => { :options => options } %>
   
-  <%= content_tag(:div, :class => 'controls') do %>
+  <%= content_tag(:div, :class => 'form-control') do %>
     <%= content_tag(:div, :class => input_class) do %>
       <%= options[:prepend_html].html_safe if options[:prepend_html].present? %>
       <%= content_tag(:span, options[:prepend], :class => 'add-on') if options[:prepend].present? %>
