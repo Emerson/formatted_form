@@ -2,7 +2,7 @@ class FormattedForm::FormBuilder < ActionView::Helpers::FormBuilder
     
   %w(
     text_field password_field email_field telephone_field number_field
-    text_area file_field range_field search_field
+    text_area file_field range_field search_field url_field
   ).each do |field_name|
     define_method field_name do |method, *args|
       options = args.detect { |a| a.is_a?(Hash) } || {}
@@ -13,9 +13,19 @@ class FormattedForm::FormBuilder < ActionView::Helpers::FormBuilder
   end
 
   %w(
-    datetime_select date_select time_select time_zone_select
+    datetime_select date_select time_select
   ).each do |field_name|
     define_method field_name do |method, options = {}, html_options = {}|
+      default_field(field_name, method, options) do
+        super(method, options)
+      end
+    end
+  end
+  
+  %w(
+    time_zone_select
+  ).each do |field_name|
+    define_method field_name do |method, options = nil, html_options = {}|
       default_field(field_name, method, options) do
         super(method, options)
       end
@@ -42,7 +52,7 @@ class FormattedForm::FormBuilder < ActionView::Helpers::FormBuilder
     choices = checked_value.collect do |label, checked, unchecked|
       label, checked  = label, label          if !checked && is_array
       checked         = label                 if !checked
-      label           = method.to_s.humanize  if !is_array
+      label           = @object.class.human_attribute_name(method.to_s)  if !is_array
       
       match = super(method, options, checked, unchecked).match(/(<input .*?\/>)?(<input .*?\/>)/)
       hidden, input = match[1], match[2]
@@ -92,7 +102,8 @@ class FormattedForm::FormBuilder < ActionView::Helpers::FormBuilder
 protected
   
   # Main rendering method
-  def default_field(field_name, method, options = {}, &block)
+  def default_field(field_name, method, options = nil, &block)
+    options ||= {}
     return yield if options.delete(:builder) == false && block_given?
     builder_options = builder_options!(options)
     @template.render(

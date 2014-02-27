@@ -99,7 +99,7 @@ class FormBuilderTest < ActionView::TestCase
     assert_select "div[class='form-group error']" do
       assert_select "div[class='form-control']" do
         assert_select "input[type='text'][id='user_name'][name='user[name]']"
-        assert_select "span[class='help-block']", "can&#x27;t be blank"
+        assert_select "span[class='help-block']", "can&#39;t be blank"
       end
     end
   end
@@ -360,5 +360,11 @@ class FormBuilderTest < ActionView::TestCase
       assert_select "select[id='user_timestamp'][name='user[timestamp]']"
     end
   end
-  
+
+  def test_url_field
+    with_url_field :url
+    assert_select "div[class='controls']" do
+      assert_select "input[type='url'][id='user_url'][name='user[url]']"
+    end
+  end
 end
